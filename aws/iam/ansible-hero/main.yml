@@ -1,0 +1,18 @@
+---
+- name: create users from csv file
+  hosts: localhost
+  tasks:
+  - name: reading the csv file
+    read_csv:
+      path: usuarios-novo.csv
+    register: user_list
+    delegate_to: localhost
+
+  - name: display user_list data
+    debug:
+      var: user_list.list
+
+  - name: execute command aws
+    command: > 
+      aws iam create-user --user-name  {{ item.usuarios }}
+    loop: "{{ user_list.list }}"
