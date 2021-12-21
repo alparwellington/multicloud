@@ -12,7 +12,17 @@
     debug:
       var: user_list.list
 
-  - name: execute command aws
+  - name: Create users IAM on AWS
     command: > 
       aws iam create-user --user-name  {{ item.usuarios }}
+    loop: "{{ user_list.list }}"
+
+  - name: Create Group for user
+    command: > 
+      aws iam add-user-to-group --user-name {{ item.usuarios }} --group-name {{ item.grupo }}
+    loop: "{{ user_list.list }}"
+
+  - name: Create password for user
+    command: > 
+      aws iam create-login-profile --password-reset-required --user-name {{ item.usuarios }} --password {{ item.senha }}
     loop: "{{ user_list.list }}"
